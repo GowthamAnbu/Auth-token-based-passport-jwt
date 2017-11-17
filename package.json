@@ -1,0 +1,22 @@
+{
+  "name": "auth-token-based-server",
+  "version": "1.0.0",
+  "description": "A token based Auth Server using passport js",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "*",
+    "cors": "*",
+    "express": "*",
+    "mongoose": "*",
+    "morgan": "*",
+    "passport": "*",
+    "passport-local": "*",
+    "jsonwebtoken": "*",
+    "passport-jwt": "*"
+  },
+  "author": "Gowtham Anbu",
+  "license": "ISC"
+}
