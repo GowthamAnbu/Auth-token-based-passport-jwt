@@ -57,7 +57,7 @@ exports.login = (request, response, next) => {
 			if(user && user.authenticate(request.body.password)){
 				var payload = {id: user._id};
 				var token = jwt.sign(payload, jwtOptions.secretOrKey);
-				response.send({token:token});
+				response.send({token:token, firstName:user.firstName, lastName: user.lastName});
 			}else{
 				response.status(400);
 				response.send({message:"username or password is incorrect"});
