@@ -20,14 +20,26 @@ module.exports = (app) => {
 
     
 
-    app.use(multer({ dest: './assets/uploads/profilePhoto',
+   /*  app.use(multer({ dest: './assets/uploads/profilePhoto',
         rename: function (fieldname, filename) {
         return filename;
         }
-    }).single('photo'));
+    }).single('photo')); */
 
-    app.post('/api/photo', passport.authenticate('jwt', { session: false }),function(request,response){
+    var storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, 'public/uploads/')
+        },
+        filename: function (req, file, cb) {
+            cb(null, file.originalname)
+      }
+    })
+ 
+var upload = multer({ storage: storage });    
+   
+    app.post('/api/photo', passport.authenticate('jwt', { session: false }), upload.single('photo'),function(request,response){
         var newItem = new Image();
+        console.log(request.file);
         if(request.file != null){
             newItem.img.data = fs.readFileSync(request.file.path);
             newItem.img.contentType = 'image/png';
