@@ -6,10 +6,10 @@ const users = require('../controllers/users'),
       const path = require('path');
       const multer = require('multer');
       let storage = multer.diskStorage({
-        destination: function (req, file, cb) {
+        destination: (req, file, cb) => {
           cb(null, './uploads/images')
         },
-        filename: function (req, file, cb) {
+        filename:(req, file, cb) => {
           cb(null,file.fieldname + '-' + Date.now() + path.extname(file.originalname));
         }
       });
@@ -45,23 +45,23 @@ module.exports = (app) => {
               +req.file.filename.slice(0,req.file.filename.lastIndexOf('.'))+ "-lg"+path.extname(req.file.filename); 
               
             //   console.log(req.file.filename.slice(0,req.file.filename.lastIndexOf('.'))+ "-sm"+path.extname(req.file.filename) )
-                Jimp.read(req.file.path, function (err, profilePhoto) {
+                Jimp.read(req.file.path,(err, profilePhoto) => {
                     if (err) throw err;
                     profilePhoto.resize(100, 75)
                         .quality(100)
-                        .write(smallUrl,function(err,profilePhoto){
+                        .write(smallUrl,(err,profilePhoto) => {
                             if(err) throw err;
                             console.log("resized 100*75");
                         });
                     profilePhoto.resize(460, 320)
                         .quality(100)
-                        .write(mediumUrl,function(err,profilePhoto){
+                        .write(mediumUrl,(err,profilePhoto) => {
                             if(err) throw err;
                             console.log("resized 460*320");
                         });
                     profilePhoto.resize(520, 500)
                         .quality(100)
-                        .write(largeUrl,function(err,profilePhoto){
+                        .write(largeUrl,(err,profilePhoto) => {
                             if(err) throw err;
                             console.log("resized 520*500");
                         });
