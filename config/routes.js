@@ -5,9 +5,18 @@ const users = require('../controllers/users'),
       mongoose = require('mongoose');
       const path = require('path');
       const multer = require('multer');
+      const fs = require('fs');
       let storage = multer.diskStorage({
         destination: (req, file, cb) => {
-          cb(null, './uploads/images')
+            if(req.headers != null){
+                var token = req.headers.authorization.split(' ')[1];
+                let decodedToken = jwt.decode(token,'tasmanianDevil');
+                let path = `./public/assets/${decodedToken.id}`
+                if(!fs.existsSync(path)){
+                    fs.mkdirSync(path);
+                }
+                cb(null, path);
+              }
         },
         filename:(req, file, cb) => {
           cb(null,file.fieldname + '-' + Date.now() + path.extname(file.originalname));
@@ -16,14 +25,14 @@ const users = require('../controllers/users'),
       const upload = multer({storage:storage})/* .single("profile-photo") */.array("profilePhoto",12);
       const Jimp = require("jimp"); 
       let jwt = require('jsonwebtoken');
+      let token = "";
+  
 module.exports = (app) => {
     
     app.use(cors());
-    
     /* app.get("/",(request, response)=>{
         response.json("running successfully");
     }); */
-    
     app.get('/', (req, res) => {
         res.sendFile(__dirname + '/index.html');
     });
@@ -35,11 +44,7 @@ module.exports = (app) => {
                 console.log(err.message);
                 res.send("erro saving file");
             }
-            console.log("logging");
-            var token = req.headers.authorization.split(' ')[1];
-            let decodedToken = jwt.decode(token,'tasmanianDevil');
-            console.log(decodedToken);
-            // console.log('files are', req.files);
+           // console.log('files are', req.files);
                 let smallUrl =req.files[0].path.slice(0,req.files[0].path.lastIndexOf("/"))+"/small/"
                 +req.files[0].filename.slice(0,req.files[0].filename.lastIndexOf('.'))+ "-sm"+path.extname(req.files[0].filename); 
                 
