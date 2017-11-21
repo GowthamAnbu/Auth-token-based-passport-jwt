@@ -13,8 +13,9 @@ const users = require('../controllers/users'),
           cb(null,file.fieldname + '-' + Date.now() + path.extname(file.originalname));
         }
       });
-      const upload = multer({storage:storage}).single("profile-photo");
+      const upload = multer({storage:storage})/* .single("profile-photo") */.array("profilePhoto",12);
       const Jimp = require("jimp"); 
+      let jwt = require('jsonwebtoken');
 module.exports = (app) => {
     
     app.use(cors());
@@ -25,10 +26,57 @@ module.exports = (app) => {
     
     app.get('/', (req, res) => {
         res.sendFile(__dirname + '/index.html');
-      });
+    });
       
-      app.post('/',(req, res) => {
+    app.post("/upload", function (req, res) {
+        upload(req, res, function(err){
+            if(req.files != null){
+            if (err) {
+                console.log(err.message);
+                res.send("erro saving file");
+            }
+            // console.log('files are', req.files);
+                let smallUrl =req.files[0].path.slice(0,req.files[0].path.lastIndexOf("/"))+"/small/"
+                +req.files[0].filename.slice(0,req.files[0].filename.lastIndexOf('.'))+ "-sm"+path.extname(req.files[0].filename); 
+                
+                let mediumUrl =req.files[0].path.slice(0,req.files[0].path.lastIndexOf("/"))+"/medium/"
+                +req.files[0].filename.slice(0,req.files[0].filename.lastIndexOf('.'))+ "-md"+path.extname(req.files[0].filename); 
+
+                let largeUrl =req.files[0].path.slice(0,req.files[0].path.lastIndexOf("/"))+"/large/"
+                +req.files[0].filename.slice(0,req.files[0].filename.lastIndexOf('.'))+ "-lg"+path.extname(req.files[0].filename); 
+                
+                Jimp.read(req.files[0].path,(err, profilePhoto) => {
+                    if (err) throw err;
+                    profilePhoto.resize(100, 75)
+                        .quality(100)
+                        .write(smallUrl,(err,profilePhoto) => {
+                            if(err) throw err;
+                            console.log("resized 100*75");
+                        });
+                    profilePhoto.resize(460, 320)
+                        .quality(100)
+                        .write(mediumUrl,(err,profilePhoto) => {
+                            if(err) throw err;
+                            console.log("resized 460*320");
+                        });
+                    profilePhoto.resize(520, 500)
+                        .quality(100)
+                        .write(largeUrl,(err,profilePhoto) => {
+                            if(err) throw err;
+                            console.log("resized 520*500");
+                        });
+                });
+                console.log("file saved Successfully");
+                res.send(req.files);
+            }else{
+                res.send("send the file first");
+            }
+        });
+      });
+    
+      /* app.post('/upload',(req, res) => {
           upload(req, res, (err)=>{
+            if(req.file != null){
             if (err) {
                 console.log(err.message);
                 res.send("erro saving file");
@@ -68,8 +116,15 @@ module.exports = (app) => {
                 });
               console.log("file saved Successfully");
               res.redirect('/');
+            }else{
+                res.send("send the file first");
+            }
           })
-      });
+          /*to be implemented
+           let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhMGVjNmU4OTEyYWNiN2NkNmU1M2I5MSIsImlhdCI6MTUxMTI1OTA1M30.lsH5lzr270ibkjIFqq6HrrUuhJatEhckPkEQ2Tjswjw";
+          let decodedToken = jwt.decode(token,'tasmanianDevil');
+          console.log(decodedToken); */
+        // }); */
       
     app.post("/register",auth.register);
     app.post("/login", auth.login);
