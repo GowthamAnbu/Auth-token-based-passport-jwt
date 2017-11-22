@@ -6,11 +6,13 @@ const users = require('../controllers/users'),
       const path = require('path');
       const multer = require('multer');
       const fs = require('fs');
+      let decodedToken;
+      const Image = require('../models/image');
       let storage = multer.diskStorage({
         destination: (req, file, cb) => {
             if(req.headers != null){
                 var token = req.headers.authorization.split(' ')[1];
-                let decodedToken = jwt.decode(token,'tasmanianDevil');
+                decodedToken = jwt.decode(token,'tasmanianDevil');
                 let path = `./public/assets/${decodedToken.id}`
                 if(!fs.existsSync(path)){
                     fs.mkdirSync(path);
@@ -75,6 +77,39 @@ module.exports = (app) => {
                             console.log("resized 520*500");
                         });
                 });
+                let photoPath =req.files[0].path; 
+                let newImage = new Image({
+                    photos:photoPath,
+                    user_id:mongoose.Types.ObjectId(decodedToken.id),
+                });
+                console.log(newImage);
+                Image.findOne({user_id:newImage.user_id}).exec(function(err, image){
+                    if(err){
+                        console.log(err);
+                        return next(err);
+                    }
+                    if(!image){
+                        newImage.save(function(err) {
+                            if(err) {
+                                console.log(err);
+                                return next(err);
+                            }
+                            console.log("image created successfully");
+                        });
+                    }else{
+                        Image.findOneAndUpdate({user_id:newImage.user_id},{$push:{photos:newImage.photos}},function(err,image){
+                            if(err){
+                                console.log(err);
+                                return next(err);
+                            }if(!image){
+                                console.log("no image found");
+                            }else{
+                                console.log("image updated successfully");
+                            }
+                        });
+                    }
+                });
+                
                 console.log("file saved Successfully");
                 res.send(req.files);
             }else{
