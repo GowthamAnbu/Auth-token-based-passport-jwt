@@ -113,6 +113,7 @@ module.exports = (app) => {
                 console.log("file saved Successfully");
                 res.send(req.files);
             }else{
+                res.status(400);
                 res.send("send the file first");
             }
         });
