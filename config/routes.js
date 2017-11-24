@@ -28,7 +28,7 @@ const users = require('../controllers/users'),
       const Jimp = require("jimp"); 
       let jwt = require('jsonwebtoken');
       let token = "";
-  
+      let events = require('../controllers/events')
 module.exports = (app) => {
     
     app.use(cors());
@@ -38,7 +38,16 @@ module.exports = (app) => {
     app.get('/', (req, res) => {
         res.sendFile(__dirname + '/index.html');
     });
-      
+    
+    app.post('/saveEvent',events.create);
+
+    app.post('/multiupload',passport.authenticate('jwt', { session: false }), function (req, res) {
+        upload(req, res, function(err){
+            console.log(req.files);
+            res.send(req.files);
+        })
+    })
+
     app.post("/upload", passport.authenticate('jwt', { session: false }), function (req, res) {
         upload(req, res, function(err){
             if(req.files != null){
