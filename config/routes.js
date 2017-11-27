@@ -41,7 +41,7 @@ module.exports = (app) => {
     
     app.post('/saveEvent',events.create);
     app.get('/events',events.get);
-
+    app.get('/events/:id',events.getById);
     app.post('/multiupload',passport.authenticate('jwt', { session: false }), function (req, res) {
         upload(req, res, function(err){
             console.log(req.files);

@@ -21,3 +21,14 @@ exports.get = (request, response, next) =>{
         }
     });
 };
+
+exports.getById = (request, response, next) =>{
+    Event.findOne({_id:request.params.id}, (err, event)=>{
+        if(err){return next(err); }
+        if(event){
+            response.send(event);
+        }else{
+            response.send(event);
+        }
+    });
+};
