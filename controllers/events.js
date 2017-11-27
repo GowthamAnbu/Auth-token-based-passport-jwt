@@ -5,8 +5,19 @@ exports.create = (request, response, next) =>{
     Event.create(payload, (err, event)=>{
         if(err){return next(err); }
         if(event){
-            response.status(201);
-            response.send("event created successfully");
+            // response.status(201);
+            response.json({message:"event created successfully"});
+        }
+    });
+};
+
+exports.get = (request, response, next) =>{
+    Event.find({}, (err, event)=>{
+        if(err){return next(err); }
+        if(event){
+            response.send(event);
+        }else{
+            response.send({message:"no events found"})
         }
     });
 };
