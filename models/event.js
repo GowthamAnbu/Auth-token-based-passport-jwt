@@ -3,6 +3,7 @@ let Schema = mongoose.Schema;
 
 let eventSchema = new Schema({
     name : String,
+    img: String,
     date: {type: Date, default:Date.now},
     location: {
         doorNo: Number,

@@ -12,5 +12,5 @@ module.exports = (app, config) => {
 
     app.use(passport.initialize());
 
-    app.use(express.static(config.rootPath + 'public'));
+    app.use('/public', express.static(config.rootPath + 'public'));
 }
