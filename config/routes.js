@@ -29,6 +29,7 @@ const users = require('../controllers/users'),
       let jwt = require('jsonwebtoken');
       let token = "";
       let events = require('../controllers/events');
+      let milter = require('./multer');
 module.exports = (app) => {
     
     app.use(cors());
@@ -39,20 +40,13 @@ module.exports = (app) => {
         res.sendFile(__dirname + '/index.html');
     });
     
-    app.post('/saveEvent', passport.authenticate('jwt', { session: false }),function(request, response){
-        upload(request, response, function(err){
-            console.log("body is",request.body);
-            console.log("files are ", request.files);
-            response.send(request.files);
-        })
-    });
+    app.post('/saveEvent', passport.authenticate('jwt', { session: false }),milter.create);
 
     app.get('/event/:id',events.getById);
     app.get('/events',events.get);
     app.post('/multiupload',passport.authenticate('jwt', { session: false }), function (req, res) {
         upload(req, res, function(err){
-            console.log("body is",req.body);
-            console.log("files are ", req.files);
+            console.log("event is ",req.body.event);
             res.send(req.files);
         })
     })
