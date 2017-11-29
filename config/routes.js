@@ -30,6 +30,7 @@ const users = require('../controllers/users'),
       let token = "";
       let events = require('../controllers/events');
       let milter = require('./multer');
+      let photos = require('./photos')
 module.exports = (app) => {
     
     app.use(cors());
@@ -51,6 +52,7 @@ module.exports = (app) => {
         })
     })
 
+    app.post('/upload',photos.upload);
     /* app.post("/upload", passport.authenticate('jwt', { session: false }), function (req, res) {
         upload(req, res, function(err){
             if(req.files != null){

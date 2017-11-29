@@ -9,7 +9,8 @@ let eventSchema = new Schema({
         doorNo: Number,
         area: String,
         pincode: Number
-    }
+    },
+    photos: {type: [String]}
 });
 
 let event = module.exports = mongoose.model('event',eventSchema);

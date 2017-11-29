@@ -49,3 +49,21 @@ exports.createe = (payload,next) =>{
         } */
     });
 };
+
+exports.upload = (eName, photos, next) =>{
+    console.log("photos url:",photos);
+    console.log("name is: ",eName);
+    Event.findOne({name:eName},function(err,event){
+        if(event){
+            console.log(event);
+        }
+    })
+
+    /* Event.findByIdAndUpdate(_id, {$push: {photos:{$each: photos}}}, function(err, event){
+        if(err){return next(err)}
+        if(event){
+            console.log("created successfully");
+        }
+    }); */
+
+}
