@@ -24,11 +24,11 @@ const users = require('../controllers/users'),
           cb(null,file.fieldname + '-' + Date.now() + path.extname(file.originalname));
         }
       });
-      const upload = multer({storage:storage})/* .single("profile-photo") */.array("profilePhoto",12);
+      const upload = multer({storage:storage})/* .single("profile-photo").array("profilePhoto",12) */.fields([{name: 'img',maxCount: 1}]);
       const Jimp = require("jimp"); 
       let jwt = require('jsonwebtoken');
       let token = "";
-      let events = require('../controllers/events')
+      let events = require('../controllers/events');
 module.exports = (app) => {
     
     app.use(cors());
@@ -39,17 +39,25 @@ module.exports = (app) => {
         res.sendFile(__dirname + '/index.html');
     });
     
-    app.post('/saveEvent',events.create);
+    app.post('/saveEvent', passport.authenticate('jwt', { session: false }),function(request, response){
+        upload(req, res, function(err){
+            console.log("body is",req.body);
+            console.log("files are ", req.files);
+            res.send(req.files);
+        })
+    });
+
     app.get('/event/:id',events.getById);
     app.get('/events',events.get);
     app.post('/multiupload',passport.authenticate('jwt', { session: false }), function (req, res) {
         upload(req, res, function(err){
-            console.log(req.files);
+            console.log("body is",req.body);
+            console.log("files are ", req.files);
             res.send(req.files);
         })
     })
 
-    app.post("/upload", passport.authenticate('jwt', { session: false }), function (req, res) {
+    /* app.post("/upload", passport.authenticate('jwt', { session: false }), function (req, res) {
         upload(req, res, function(err){
             if(req.files != null){
             if (err) {
@@ -127,7 +135,7 @@ module.exports = (app) => {
                 res.send("send the file first");
             }
         });
-      });
+      }); */
     
     app.post("/register",auth.register);
     app.post("/login", auth.login);
