@@ -40,10 +40,10 @@ module.exports = (app) => {
     });
     
     app.post('/saveEvent', passport.authenticate('jwt', { session: false }),function(request, response){
-        upload(req, res, function(err){
-            console.log("body is",req.body);
-            console.log("files are ", req.files);
-            res.send(req.files);
+        upload(request, response, function(err){
+            console.log("body is",request.body);
+            console.log("files are ", request.files);
+            response.send(request.files);
         })
     });
 
