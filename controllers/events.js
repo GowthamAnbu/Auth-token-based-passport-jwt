@@ -39,3 +39,13 @@ exports.getById = (request, response, next) =>{
         response.send({message:"not event found"});
     }
 };
+
+exports.createe = (payload,next) =>{
+    console.log(payload);
+    Event.create(payload, (err, event)=>{
+        if(err){return next(err); }
+        /* if(event){
+            console.log("event created successfully");
+        } */
+    });
+};

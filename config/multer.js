@@ -1,6 +1,7 @@
 let multer = require("multer"),
  path = require('path'),
  fs = require('fs');
+ let events = require('../controllers/events');
 let event;
 let storage = multer.diskStorage({
   destination: (request, file, callback) => {
@@ -22,6 +23,9 @@ exports.create = function(request, response,next){
     if(err){
       return next(err);
     }
-      response.send(request.files);
+    event = JSON.parse(request.body.event);
+    event.img_url = request.files.img[0].path;
+    events.createe(event);
+    response.send(event);
   });
 }
