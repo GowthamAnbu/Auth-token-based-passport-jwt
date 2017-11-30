@@ -34,6 +34,6 @@ exports.upload = function(request, response,next){
      photos.push(photo.path);
    });
    events.upload(request.body.name,photos);
-   response.send(request.files);
+   response.send({message:"file uploaded successfully"});
  });
 }

@@ -24,7 +24,6 @@ exports.get = (request, response, next) =>{
 
 exports.getById = (request, response, next) =>{
     let id = request.params.id;
-    console.log(id);
     if (id.match(/^[0-9a-fA-F]{24}$/)) {
         Event.findById(id, (err, event)=>{
             if(err){return next(err); }
@@ -51,19 +50,9 @@ exports.createe = (payload,next) =>{
 };
 
 exports.upload = (eName, photos, next) =>{
-    console.log("photos url:",photos);
-    console.log("name is: ",eName);
-    Event.findOne({name:eName},function(err,event){
+    Event.findOneAndUpdate({name:eName}, {$push: {photos:{$each: photos}}},function(err,event){
         if(event){
-            console.log(event);
+            console.log(" Event is ",event);
         }
     })
-
-    /* Event.findByIdAndUpdate(_id, {$push: {photos:{$each: photos}}}, function(err, event){
-        if(err){return next(err)}
-        if(event){
-            console.log("created successfully");
-        }
-    }); */
-
 }
